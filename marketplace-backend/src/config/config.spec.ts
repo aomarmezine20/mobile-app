@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ConfigurationModule } from './config.module';
 import { jwtConfig } from './jwt.config';
 
@@ -13,13 +13,13 @@ describe('ConfigurationModule', () => {
   });
 
   it('should load configuration', async () => {
-    const configService = module.get(ConfigModule);
-    expect(configService).toBeDefined();
+  const configService = module.get(ConfigService);
+  expect(configService).toBeDefined();
   });
 
   it('should load JWT configuration', async () => {
-    const configService = module.get(ConfigModule);
-    const jwtConfig = configService.get(jwtConfig.KEY);
-    expect(jwtConfig).toBeDefined();
+  const configService = module.get(ConfigService);
+  const loadedJwtConfig = configService.get('jwt');
+    expect(loadedJwtConfig).toBeDefined();
   });
 });

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { Roles } from '../../../guards/roles.decorator';
-import { JwtAuthGuard } from '../../../guards/jwt-auth.guard';
+import { Roles } from '../../guards/roles.decorator';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { ProductsService } from './products.service';
 
 @ApiTags('products')

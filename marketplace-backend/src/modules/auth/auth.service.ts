@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../database/prisma/prisma.service';
 import { LoginDto, RegisterDto } from './dtos/auth.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -83,12 +84,10 @@ export class AuthService {
   }
 
   private async hashPassword(password: string): Promise<string> {
-    const bcrypt = await import('bcryptjs');
     return bcrypt.hash(password, 10);
   }
 
   private async comparePasswords(password: string, hashedPassword: string): Promise<boolean> {
-    const bcrypt = await import('bcryptjs');
     return bcrypt.compare(password, hashedPassword);
   }
 }

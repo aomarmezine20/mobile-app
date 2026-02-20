@@ -12,13 +12,22 @@ async function bootstrap() {
   // Enable CORS
   app.enableCors();
   
-  // Apply middleware
-  app.use(RequestLoggerMiddleware);
-  app.use(CorsMiddleware);
-  app.use(SecurityMiddleware);
-  app.use(RateLimitMiddleware);
-  app.use(CompressionMiddleware);
+  // Apply middleware instances (class-based Nest middleware must be applied
+  // as functions when using the raw Express `app.use`)
+  const requestLogger = new RequestLoggerMiddleware();
+  const corsMiddleware = new CorsMiddleware();
+  const securityMiddleware = new SecurityMiddleware();
+  const rateLimitMiddleware = new RateLimitMiddleware();
+  const compressionMiddleware = new CompressionMiddleware();
+
+  app.use((req, res, next) => requestLogger.use(req, res, next));
+  app.use((req, res, next) => corsMiddleware.use(req, res, next));
+  app.use((req, res, next) => securityMiddleware.use(req, res, next));
+  app.use((req, res, next) => rateLimitMiddleware.use(req, res, next));
+  app.use((req, res, next) => compressionMiddleware.use(req, res, next));
   
-  await app.listen(process.env.PORT ?? 3000);
+  const port = Number(process.env.PORT ?? 3000);
+  // Bind to 0.0.0.0 so the server is reachable from other devices on the LAN
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();

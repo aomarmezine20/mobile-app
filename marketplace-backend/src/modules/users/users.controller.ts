@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, UseGuards, Request, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { Roles } from '../../../guards\roles.decorator';
-import { JwtAuthGuard } from '../../../guards/jwt-auth.guard';
+import { Roles } from '../../guards/roles.decorator';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
