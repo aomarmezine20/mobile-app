@@ -1,0 +1,176 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      UserRole @default(Buyer)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  products    Product[]    @relation("SupplierProducts")
+  orders      Order[]      @relation("BuyerOrders")
+  deliveries  Delivery[]   @relation("DriverDeliveries")
+  reviews     Review[]     @relation("UserReviews")
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Product {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  price       Decimal
+  stock       Int
+  category    String
+  status      ProductStatus @default(Active)
+  supplierId  String
+  supplier    User        @relation("SupplierProducts", fields: [supplierId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  orders    OrderItem[]
+  reviews   Review[]
+  images    ProductImage[]
+
+  @@map("products")
+}
+
+model Order {
+  id           String     @id @default(cuid())
+  orderNumber  String     @unique
+  buyerId      String
+  buyer        User       @relation("BuyerOrders", fields: [buyerId], references: [id])
+  status       OrderStatus @default(Pending)
+  totalAmount  Decimal
+  shippingAddress String
+  deliveryDate DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  // Relations
+  items     OrderItem[]
+  delivery  Delivery?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Decimal
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model Delivery {
+  id          String     @id @default(cuid())
+  orderId     String     @unique
+  driverId    String
+  status      DeliveryStatus @default(Scheduled)
+  estimatedTime DateTime
+  actualTime   DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  // Relations
+  order   Order @relation(fields: [orderId], references: [id])
+  driver  User   @relation("DriverDeliveries", fields: [driverId], references: [id])
+
+  @@map("deliveries")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  user    User     @relation("UserReviews", fields: [userId], references: [id])
+  product Product  @relation(fields: [productId], references: [id])
+
+  @@map("reviews")
+}
+
+model ProductImage {
+  id        String @id @default(cuid())
+  productId String
+  imageUrl  String
+  isPrimary Boolean @default(false)
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("product_images")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+enum UserRole {
+  Admin
+  Supplier
+  Buyer
+  Driver
+}
+
+enum ProductStatus {
+  Active
+  Inactive
+  OutOfStock
+}
+
+enum OrderStatus {
+  Pending
+  Confirmed
+  Processing
+  Shipped
+  Delivered
+  Cancelled
+}
+
+enum DeliveryStatus {
+  Scheduled
+  InTransit
+  Delivered
+  Failed
+}
+
+enum NotificationType {
+  OrderUpdate
+  DeliveryUpdate
+  SystemMessage
+  Promotional
+}
