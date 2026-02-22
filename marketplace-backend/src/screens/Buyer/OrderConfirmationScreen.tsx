@@ -7,10 +7,13 @@ import { Image } from '../ui/atoms/Image';
 
 interface OrderConfirmationScreenProps {
   navigation: any;
+  route: any;
 }
 
-const OrderConfirmationScreen: React.FC<OrderConfirmationScreenProps> = ({ navigation }) => {
-  const [order, setOrder] = React.useState({
+const OrderConfirmationScreen: React.FC<OrderConfirmationScreenProps> = ({ navigation, route }) => {
+  const incomingOrder = route?.params?.order;
+
+  const order = incomingOrder || {
     id: '12345',
     date: '2024-01-15',
     status: 'processing',
@@ -41,7 +44,7 @@ const OrderConfirmationScreen: React.FC<OrderConfirmationScreenProps> = ({ navig
       cardNumber: '**** **** **** 1234',
       cardName: 'John Doe',
     },
-  });
+  };
 
   const handleContinueShopping = () => {
     navigation.navigate('Home');
@@ -52,6 +55,14 @@ const OrderConfirmationScreen: React.FC<OrderConfirmationScreenProps> = ({ navig
   };
 
   const renderOrderSummary = () => {
+    const subtotal = order.items.reduce(
+      (total: number, item: any) => total + item.price * item.quantity,
+      0
+    );
+    const tax = subtotal * 0.08;
+    const shipping = subtotal > 100 ? 0 : 9.99;
+    const total = subtotal + tax + shipping;
+
     return (
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Order Summary</Text>
@@ -78,19 +89,21 @@ const OrderConfirmationScreen: React.FC<OrderConfirmationScreenProps> = ({ navig
         <View style={styles.summary}>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Subtotal:</Text>
-            <Text style={styles.summaryValue}>${order.total.toFixed(2)}</Text>
+            <Text style={styles.summaryValue}>${subtotal.toFixed(2)}</Text>
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Tax:</Text>
-            <Text style={styles.summaryValue}>$10.40</Text>
+            <Text style={styles.summaryValue}>${tax.toFixed(2)}</Text>
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Shipping:</Text>
-            <Text style={styles.summaryValue}>FREE</Text>
+            <Text style={styles.summaryValue}>
+              {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
+            </Text>
           </View>
           <View style={[styles.summaryRow, styles.totalRow]}>
             <Text style={styles.totalLabel}>Total:</Text>
-            <Text style={styles.totalValue}>${order.total.toFixed(2)}</Text>
+            <Text style={styles.totalValue}>${total.toFixed(2)}</Text>
           </View>
         </View>
       </View>

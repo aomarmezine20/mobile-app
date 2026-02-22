@@ -1,16 +1,23 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList } from 'react-native';
 import { colors, spacing, typography } from '../../constants';
-import { Badge } from '../ui/atoms/Badge';
 import { Button } from '../ui/atoms/Button';
-import { Image } from '../ui/atoms/Image';
+
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  read: boolean;
+  createdAt: string;
+}
 
 interface NotificationsScreenProps {
   navigation: any;
 }
 
-const NotificationsScreen: React.FC<NotificationsScreenProps> = ({ navigation }) => {
-  const [notifications, setNotifications] = React.useState<any[]>([
+const NotificationsScreen: React.FC<NotificationsScreenProps> = () => {
+  const [notifications, setNotifications] = React.useState<Notification[]>([
     {
       id: '1',
       title: 'Order Shipped',
@@ -30,7 +37,7 @@ const NotificationsScreen: React.FC<NotificationsScreenProps> = ({ navigation })
     {
       id: '3',
       title: 'Price Drop',
-      message: 'The price of Wireless Headphones has dropped by 20%!',
+      message: 'The price of Wireless Headphones has dropped by 20%.',
       type: 'warning',
       read: false,
       createdAt: '5 minutes ago',
@@ -53,25 +60,18 @@ const NotificationsScreen: React.FC<NotificationsScreenProps> = ({ navigation })
     },
   ]);
 
-  const [selectedNotification, setSelectedNotification] = React.useState<any | null>(null);
+  const [selectedNotification, setSelectedNotification] =
+    React.useState<Notification | null>(null);
 
-  const handleNotificationPress = (notification: any) => {
+  const handleNotificationPress = (notification: Notification) => {
     setSelectedNotification(notification);
-    // Mark as read
-    setNotifications(prevNotifications =>
-      prevNotifications.map(n =>
-already
-        n.id === notification.id
-          ? { ...n, read: true }
-          : n
-      )
+    setNotifications(prev =>
+      prev.map(n => (n.id === notification.id ? { ...n, read: true } : n)),
     );
   };
 
   const handleMarkAllAsRead = () => {
-    setNotifications(prevNotifications =>
-      prevNotifications.map(n => ({ ...n, read: true }))
-    );
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
   const handleClearAll = () => {
@@ -79,8 +79,8 @@ already
     setSelectedNotification(null);
   };
 
-  const getNotificationColor = (type: string) => {
-    const colorsByType = {
+  const getNotificationColor = (type: Notification['type']) => {
+    const colorsByType: Record<Notification['type'], string> = {
       info: 'blue',
       success: 'green',
       warning: 'orange',
@@ -89,7 +89,17 @@ already
     return colorsByType[type] || 'blue';
   };
 
-  const renderNotification = ({ item }: { item: any }) => (
+  const getNotificationIcon = (type: Notification['type']) => {
+    const iconsByType: Record<Notification['type'], string> = {
+      info: 'ℹ️',
+      success: '✅',
+      warning: '⚠️',
+      error: '❌',
+    };
+    return iconsByType[type] || 'ℹ️';
+  };
+
+  const renderNotification = ({ item }: { item: Notification }) => (
     <TouchableOpacity
       style={[
         styles.notification,
@@ -99,48 +109,42 @@ already
       onPress={() => handleNotificationPress(item)}
     >
       <View style={styles.notificationIcon}>
-        <Text style={[
-          styles.notificationIconText,
-          { color: getNotificationColor(item.type) },
-        ]}>
+        <Text
+          style={[
+            styles.notificationIconText,
+            { color: getNotificationColor(item.type) },
+          ]}
+        >
           {getNotificationIcon(item.type)}
         </Text>
-      </u003e
+      </View>
       <View style={styles.notificationContent}>
         <Text style={styles.notificationTitle}>{item.title}</Text>
         <Text style={styles.notificationMessage} numberOfLines={2}>
           {item.message}
         </Text>
         <Text style={styles.notificationTime}>{item.createdAt}</Text>
-      </View>>
-    </TouchableOpacity>>
+      </View>
+    </TouchableOpacity>
   );
 
-  const getNotificationIcon = (type: string) => {
-    const iconsByType = {
-      info: 'ℹ️',
-      success: '✅',
-      warning: '⚠️',
-      error: '❌',
-    };
-    return iconsByType[type] || 'ℹ️';
-  };
-
   const renderSelectedNotification = () => {
-    if (!selectedNotification) return null;
+    if (!selectedNotification) {
+      return null;
+    }
 
     return (
       <View style={styles.selectedNotificationView}>
         <Text style={styles.selectedNotificationTitle}>
           {selectedNotification.title}
-        </Text>>
+        </Text>
         <Text style={styles.selectedNotificationMessage}>
           {selectedNotification.message}
-        </Text>>
+        </Text>
         <Text style={styles.selectedNotificationTime}>
           {selectedNotification.createdAt}
-        </Text>>
-      </View>>
+        </Text>
+      </View>
     );
   };
 
@@ -149,52 +153,55 @@ already
       <Text style={styles.emptyIcon}>🔔</Text>
       <Text style={styles.emptyTitle}>No notifications</Text>
       <Text style={styles.emptySubtitle}>
-        You'll see your notifications here when you have them
-      </Text>>
-    </View>>
-  };
+        You'll see your notifications here when you have them.
+      </Text>
+    </View>
+  );
 
   const renderActions = () => (
     <View style={styles.actions}>
       <Button
         variant="outline"
         onPress={handleMarkAllAsRead}
-        style={styles.actionButton}>
+        style={styles.actionButton}
+      >
         Mark All as Read
-      </Button>>
+      </Button>
       <Button
         variant="outline"
         onPress={handleClearAll}
-        style={styles.actionButton}>
+        style={styles.actionButton}
+      >
         Clear All
-      </Button>>
-    </View>>
+      </Button>
+    </View>
   );
+
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Notifications</Text>
-        <Text style={styles.subtitle}>
-          {notifications.filter(n => !n.read).length} unread</Text>
-      </View>>
-      
+        <Text style={styles.subtitle}>{unreadCount} unread</Text>
+      </View>
+
       {notifications.length > 0 ? (
         <View style={styles.notificationsList}>
-          {renderActions()}>
+          {renderActions()}
           <FlatList
             data={notifications}
             renderItem={renderNotification}
-            keyExtractor={(item) => item.id}
+            keyExtractor={item => item.id}
             contentContainerStyle={styles.notificationsContainer}
-            showsVerticalScrollIndicator={false}
-          />>
-          {renderSelectedNotification()}>
-        </View>>
+            scrollEnabled={false}
+          />
+          {renderSelectedNotification()}
+        </View>
       ) : (
-        renderEmptyState()>
-      )}>
-    </ScrollView>>
+        renderEmptyState()
+      )}
+    </ScrollView>
   );
 };
 
@@ -322,3 +329,4 @@ const styles = StyleSheet.create({
 });
 
 export default NotificationsScreen;
+

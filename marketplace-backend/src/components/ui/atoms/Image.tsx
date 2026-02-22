@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, ImageProps } from 'react-native';
-import { View, StyleSheet } from 'react-native'';
-import { colors, spacing } from '../../constants'';
+import { View, StyleSheet } from 'react-native';
+import { colors, spacing } from '../../constants';
 
 interface ImageProps extends ImageProps {
   variant?: 'default' | 'rounded' | 'circle';

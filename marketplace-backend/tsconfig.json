@@ -21,5 +21,15 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+  "exclude": [
+    "src/screens"
+  ]
+},
+  "exclude": [
+    "src/screens",
+    "src/components/ui",
+    "src/components/context",
+    "src/navigation"
+  ]
 }

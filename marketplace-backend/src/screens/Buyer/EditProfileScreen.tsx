@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: spacing.component.padding.sm,
     borderBottomWidth: 1,
-    borderBottomColor: colors.neutral[200,
+    borderBottomColor: colors.neutral[200],
   },
   settingLabel: {
     ...typography.body,

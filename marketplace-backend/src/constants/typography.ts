@@ -1,9 +1,9 @@
 export const typography = {
   // Font families
   fontFamily: {
-    primary: '-system-font, -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif,
-    secondary: '-system-font, -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif,
-    mono: '-menlo, 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace,
+    primary: "-system-font, -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+    secondary: "-system-font, -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+    mono: "-menlo, 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace",
   },
   
   // Font weights

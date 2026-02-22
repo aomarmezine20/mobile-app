@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: spacing.component.padding.xs,
     borderBottomWidth: 1,
-    borderBottomColor: colors.neutral[200,
+    borderBottomColor: colors.neutral[200],
   },
   itemName: {
     ...typography.body,

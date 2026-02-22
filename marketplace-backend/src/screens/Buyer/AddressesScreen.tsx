@@ -94,7 +94,8 @@ const AddressesScreen: React.FC<AddressesScreenProps> = ({ navigation }) => {
         styles.addressCard,
         selectedAddress?.id === item.id && styles.selectedAddressCard,
       ]}
-      onPress={() => handleAddressPress(item)}\n    >
+      onPress={() => handleAddressPress(item)}
+    >
       <View style={styles.addressHeader}>
         <Text style={styles.addressType}>
           {getAddressTypeLabel(item.type)}
